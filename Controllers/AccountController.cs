@@ -1,8 +1,17 @@
-﻿using InfoProtection.Models.ViewModels;
+﻿using InfoProtection.Models;
+using InfoProtection.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 public class AccountController : Controller
 {
+    private readonly ApplicationDbContext _context;
+
+    public AccountController(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+
     // Отображение страницы регистрации
     [HttpGet]
     [Route("register")] // Настройка маршрута для страницы регистрации
@@ -13,18 +22,47 @@ public class AccountController : Controller
 
     // Обработка данных формы регистрации
     [HttpPost]
-    [Route("register")] // Маршрут для отправки данных регистрации
-    public IActionResult Register(RegisterViewModel model)
+    [ValidateAntiForgeryToken] // Защита от CSRF атак
+    public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (ModelState.IsValid)
         {
-            // Логика регистрации пользователя, хеширование пароля и сохранение в БД
-            // Валидация и создание пользователя
-            return RedirectToAction("Login"); // Перенаправление на страницу авторизации после успешной регистрации
+            // 1. Проверяем, существует ли пользователь с таким именем
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("", "Пользователь с таким именем уже существует.");
+                return View(model);
+            }
+
+            // 2. Генерация соли
+            string salt = GenerateSalt();
+
+            // 3. Хеширование пароля с использованием Стрибог
+            string hashedPassword = HashPasswordUsingStreebog(model.Password, salt);
+
+            // 4. Создание нового пользователя
+            var user = new User
+            {
+                Username = model.Username,
+                Email = model.Email,
+                PasswordHash = hashedPassword,
+                Salt = salt,
+                Role = "User" // или другая роль по умолчанию
+            };
+
+            // 5. Сохранение пользователя в базе данных
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // 6. Перенаправление на страницу авторизации
+            return RedirectToAction("Login", "Account");
         }
 
-        return View(model); // Если что-то не так, возвращаем форму с ошибками
+        // Если модель не валидна, возвращаем пользователя на страницу регистрации
+        return View(model);
     }
+
 
     // Отображение страницы авторизации
     [HttpGet]
