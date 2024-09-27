@@ -1,5 +1,6 @@
 ﻿using InfoProtection.Models;
 using InfoProtection.Models.ViewModels;
+using InfoProtection.Protection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,10 +37,10 @@ public class AccountController : Controller
             }
 
             // 2. Генерация соли
-            string salt = GenerateSalt();
+            string salt = ProtectionMethods.GenerateSalt();
 
             // 3. Хеширование пароля с использованием Стрибог
-            string hashedPassword = HashPasswordUsingStreebog(model.Password, salt);
+            string hashedPassword = ProtectionMethods.HashPasswordUsingStreebog(model.Password, salt);
 
             // 4. Создание нового пользователя
             var user = new User
@@ -56,7 +57,7 @@ public class AccountController : Controller
             await _context.SaveChangesAsync();
 
             // 6. Перенаправление на страницу авторизации
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Encryption", "Encryption");
         }
 
         // Если модель не валидна, возвращаем пользователя на страницу регистрации
