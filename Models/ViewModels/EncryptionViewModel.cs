@@ -8,7 +8,6 @@ namespace InfoProtection.Models.ViewModels
         [Display(Name = "Algorithm")]
         public string Algorithm { get; set; }
 
-        [Required]
         [Display(Name = "TextStart")]
         public string TextStart { get; set; }
 

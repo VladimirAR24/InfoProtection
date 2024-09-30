@@ -26,6 +26,7 @@ namespace InfoProtection.Controllers
         [Route("encryption")]
         public IActionResult Encryption(EncryptionViewModel model, string action)
         {
+            
 
             if (action == "encrypt")
             {
@@ -51,9 +52,10 @@ namespace InfoProtection.Controllers
                     model.TextEnd = model.TextStart;
                 }
             }
-            
+
 
             // Вернуть модель с результатом
+            ModelState.Clear();
             return View(model);
         }
 

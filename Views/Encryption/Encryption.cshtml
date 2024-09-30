@@ -23,12 +23,12 @@
 
                 <div class="form-group">
                     <label asp-for="TextStart">Текст для шифрования:</label>
-                    <textarea asp-for="TextStart" name="TextStart" class="form-control" rows="4"></textarea>
+                    <textarea asp-for="TextStart" name="TextStart" class="form-control" rows="4" data="@Model.TextStart"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="TextEnd">Результат операции:</label>
-                    <textarea asp-for="TextEnd" name="TextEnd" class="form-control" rows="4" readonly></textarea>
+                    <textarea asp-for="TextEnd" name="TextEnd" class="form-control" rows="4" data="@Model.TextEnd" readonly></textarea>
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-success" name="action" value="encrypt">Зашифровать</button>
