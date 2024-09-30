@@ -1,0 +1,60 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Страница админа";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center">Страница админа</h1>
+
+    <!-- Панель с вкладками -->
+    <ul class="nav nav-tabs" id="adminTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="test-tab" data-bs-toggle="tab" data-bs-target="#test" type="button" role="tab" aria-controls="test" aria-selected="true">Тестовая</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="create-user-tab" data-bs-toggle="tab" data-bs-target="#create-user" type="button" role="tab" aria-controls="create-user" aria-selected="false">Создание пользователя</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="adminTabContent">
+        <!-- Вкладка с фактом -->
+        <div class="tab-pane fade show active" id="test" role="tabpanel" aria-labelledby="test-tab">
+            <div class="mt-4">
+                <h3>Мой любимый факт:</h3>
+                <p>Интересный факт: человеческий мозг потребляет примерно 20% всей энергии тела, несмотря на то, что он составляет лишь около 2% от общей массы тела.</p>
+            </div>
+        </div>
+
+        <!-- Вкладка с формой создания пользователя -->
+        <div class="tab-pane fade" id="create-user" role="tabpanel" aria-labelledby="create-user-tab">
+            <div class="mt-4">
+                <h3>Создание пользователя</h3>
+                <form asp-action="CreateUser" method="post">
+                    <div class="form-group mb-3">
+                        <label asp-for="Username">Имя пользователя</label>
+                        <input asp-for="Username" type="text" class="form-control" name="Username" placeholder="Введите имя пользователя" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Email">Email</label>
+                        <input asp-for="Email" type="Email" class="form-control" name="Email" placeholder="Введите email" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Password">Пароль</label>
+                        <input asp-for="Password" type="Password" class="form-control" name="Password" placeholder="Введите пароль" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="ConfirmPassword">Пароль</label>
+                        <input asp-for="ConfirmPassword" type="ConfirmPassword" class="form-control" name="ConfirmPassword" placeholder="Введите пароль" required />
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Создать пользователя</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Подключение Bootstrap (если еще не подключен) -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>

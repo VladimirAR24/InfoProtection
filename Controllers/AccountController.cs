@@ -67,7 +67,6 @@ public class AccountController : Controller
 
     // Отображение страницы авторизации
     [HttpGet]
-
     [Route("login")]
     public IActionResult Login()
     {
@@ -87,5 +86,19 @@ public class AccountController : Controller
         }
 
         return View(model); // Возвращаем форму авторизации с ошибками
+    }
+
+    [HttpGet]
+    [Route("AdminPage")]
+    public IActionResult AdminPage() 
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult AdminUserCreate()
+    {
+
+        return View();
     }
 }
