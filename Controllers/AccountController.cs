@@ -37,10 +37,10 @@ public class AccountController : Controller
             }
 
             // 2. Генерация соли
-            string salt = ProtectionMethods.GenerateSalt();
+            string salt = HashMethods.GenerateSalt();
 
             // 3. Хеширование пароля с использованием Стрибог
-            string hashedPassword = ProtectionMethods.HashPasswordUsingStreebog(model.Password, salt);
+            string hashedPassword = HashMethods.HashPasswordUsingStreebog(model.Password, salt);
 
             // 4. Создание нового пользователя
             var user = new User

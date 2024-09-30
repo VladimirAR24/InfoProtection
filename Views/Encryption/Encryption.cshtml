@@ -9,32 +9,32 @@
     <div class="text-center">
         <a class="btn btn-primary" href="/my-encryptions">Мои шифры</a>
     </div>
-
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <form asp-action="Encryption" method="post">
-                <div class="form-group">
+    
+    <form asp-action="Encryption" method="post">
+        <div class="row">
+                <div class="form-group col-md-auto">
                     <label asp-for="Algorithm">Выберите алгоритм:</label>
                     <select asp-for="Algorithm" name="Algorithm" class="form-control">
                         <option value="Кузнечик">Кузнечик</option>
                         <option value="RSA 16384">RSA 16384</option>
                     </select>
                 </div>
-
-                <div class="form-group">
+        </div>
+        <div class="row justify-content-md-center">
+                <div class="form-group col">
                     <label asp-for="TextStart">Текст для шифрования:</label>
                     <textarea asp-for="TextStart" name="TextStart" class="form-control" rows="4" data="@Model.TextStart"></textarea>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group col">
                     <label asp-for="TextEnd">Результат операции:</label>
                     <textarea asp-for="TextEnd" name="TextEnd" class="form-control" rows="4" data="@Model.TextEnd" readonly></textarea>
                 </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-success" name="action" value="encrypt">Зашифровать</button>
-                    <button type="submit" class="btn btn-warning" name="action" value="decrypt">Расшифровать</button>
-                </div>
-            </form>
         </div>
-    </div>
+        <div class="text-center">
+                <button type="submit" class="btn btn-success" name="action" value="encrypt">Зашифровать</button>
+                <button type="submit" class="btn btn-warning" name="action" value="decrypt">Расшифровать</button>
+        </div>
+    </form>
+
 </div>
