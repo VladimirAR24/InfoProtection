@@ -1,0 +1,29 @@
+﻿@model IEnumerable<InfoProtection.Models.EncryptedMessage>
+
+@{
+    ViewData["Title"] = "Мои шифры";
+}
+
+<h2 class="text-center">Мои шифры</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Алгоритм</th>
+            <th>Исходный текст</th>
+            <th>Зашифрованный текст</th>
+            <th>Дата шифрования</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var encryption in Model)
+        {
+            <tr>
+                <td>@encryption.Algorithm</td>
+                <td>@encryption.OriginalText</td>
+                <td>@encryption.EncryptedText</td>
+                <td>@encryption.EncryptionDate.ToString("dd/MM/yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

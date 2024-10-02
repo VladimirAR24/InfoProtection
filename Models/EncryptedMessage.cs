@@ -4,10 +4,11 @@
     {
         public int Id { get; set; }
         public int UserId { get; set; }  // Foreign key
-
-        public string EncryptedMessageText { get; set; }
         public string Algorithm { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public string OriginalText { get; set; }
+        public string EncryptedText { get; set; }
+        public DateTime EncryptionDate { get; set; }
+
 
         // Навигационное свойство для связи с пользователем
         public User User { get; set; }

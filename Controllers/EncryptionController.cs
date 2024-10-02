@@ -3,6 +3,8 @@ using InfoProtection.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using InfoProtection.Protection;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace InfoProtection.Controllers
 {
@@ -57,12 +59,20 @@ namespace InfoProtection.Controllers
             return View(model);
         }
 
-        
+        [HttpGet]
+        [Route("myencryptions")]
+        public async Task<IActionResult> MyEncryptions()
+        {
+            // Получаем текущего пользователя
+            var currentUser = User.Identity.Name;
 
-        
+            // Получаем шифры текущего пользователя из базы данных
+            var userEncryptions = await _context.EncryptedMessages
+                .Where(e => e.User.Username == currentUser)
+                .ToListAsync();
 
-        
+            return View(userEncryptions);
+        }
 
-        
     }
 }

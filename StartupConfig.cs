@@ -19,6 +19,10 @@ public class StartupConfig
 
         // Добавление MVC или контроллеров с представлениями
         services.AddControllersWithViews();
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Account/Login"; // Путь к странице входа
+        });
         Console.WriteLine("Config 1 OK");
         // Добавление сервисов для работы с авторизацией
         // services.AddAuthentication();
