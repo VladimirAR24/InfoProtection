@@ -16,7 +16,7 @@ namespace InfoProtection.Controllers
         [Route("")]
         public IActionResult Index()
         {
-            return View();
+            return Redirect("~/Login");
         }
 
         [Route("Home/Privacy")]

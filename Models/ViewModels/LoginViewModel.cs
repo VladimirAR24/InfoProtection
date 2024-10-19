@@ -11,7 +11,7 @@ namespace InfoProtection.Models.ViewModels
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
 
     }

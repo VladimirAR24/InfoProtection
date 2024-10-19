@@ -1,16 +1,22 @@
 ﻿using InfoProtection.Models;
 using InfoProtection.Models.ViewModels;
 using InfoProtection.Protection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 public class AccountController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public AccountController(ApplicationDbContext context)
+
+    public AccountController(ApplicationDbContext context, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
     {
         _context = context;
+        _signInManager = signInManager;
+        _userManager = userManager;
     }
 
     // Отображение страницы регистрации
@@ -42,25 +48,34 @@ public class AccountController : Controller
 
     // Отображение страницы авторизации
     [HttpGet]
-    [Route("login")]
-    public IActionResult Login()
+    [Route("Login")]
+    public IActionResult Login(string returnUrl = null)
     {
-        return View(); // Возвращаем представление страницы авторизации
+        return View(
+            //new LoginViewModel { ReturnUrl = returnUrl }
+            );
     }
 
-    // Обработка данных формы авторизации
+
     [HttpPost]
-    [Route("login")]
-    public IActionResult Login(LoginViewModel model)
+    [Route("Login")]
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            // Логика аутентификации пользователя
-            // Проверка введённого пароля с сохранённым хешем
-            return RedirectToAction("Index", "Home"); // Перенаправление на главную страницу после успешного входа
+            View(model);
         }
 
-        return View(model); // Возвращаем форму авторизации с ошибками
+        
+        return View(model);
+    }
+
+    [HttpPost]
+    [Route("Logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Login");
     }
 
     [HttpGet]

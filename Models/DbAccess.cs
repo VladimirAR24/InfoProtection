@@ -31,14 +31,15 @@ namespace InfoProtection.Models
             //string hashedPassword = HashMethods.HashPasswordUsingStreebog(model.Password, salt);
 
             // 4. Создание нового пользователя
-            var user = new User
-            {
-                Username = model.Username,
-                Email = model.Email,
-                PasswordHash = hashedPassword,
-                Salt = salt,
-                Role = "User" // или другая роль по умолчанию
-            };
+            var user = User.Create
+            (
+                0,
+                model.Username,
+                model.Email,
+                hashedPassword,
+                salt,
+                "User" // или другая роль по умолчанию
+            );
 
             // 5. Сохранение пользователя в базе данных
             _context.Users.Add(user);

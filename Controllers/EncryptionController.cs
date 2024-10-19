@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InfoProtection.Controllers
 {
+    [Authorize]
     public class EncryptionController : Controller
     {
         private readonly ApplicationDbContext _context;

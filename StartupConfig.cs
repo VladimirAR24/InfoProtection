@@ -1,4 +1,6 @@
 ﻿using InfoProtection.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 public class StartupConfig
@@ -17,15 +19,27 @@ public class StartupConfig
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddIdentity<IdentityUser, IdentityRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+
         // Добавление MVC или контроллеров с представлениями
         services.AddControllersWithViews();
         services.ConfigureApplicationCookie(options =>
         {
-            options.LoginPath = "/Account/Login"; // Путь к странице входа
+            options.LoginPath = "/Login"; // Путь к странице входа
         });
         Console.WriteLine("Config 1 OK");
+
         // Добавление сервисов для работы с авторизацией
-        // services.AddAuthentication();
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.LoginPath = "/Login"; // Путь на страницу логина
+        });
+
+        services.AddAuthorization(); // Добавление поддержки авторизации
+
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
@@ -55,10 +69,20 @@ public class StartupConfig
 
         //включает маршрутизацию запросов к контроллерам.
         app.UseRouting();
+
+        // Middleware аутентификации
+        app.UseAuthentication();
+
+        // Middleware авторизации
+        app.UseAuthorization();
+
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Account}/{action=Login}/{id?}"); // Установка страницы логина как главной
         });
+
         Console.WriteLine("Config 2 OK");
     }
 }
