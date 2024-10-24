@@ -37,6 +37,14 @@
                     </ul>
                 </div>
             </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="user-auth">
+                    <span>Добро пожаловать!</span>
+                    <img src="~/images/user_icon.jpeg" alt="Тут должна быть User Icon" title="Вы авторизованы" />
+                </div>
+            }
+
         </nav>
     </header>
     <div class="container">
@@ -45,10 +53,8 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - InfoProtection - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    <footer>
+        <p>&copy; 2024 - InfoProtection</p>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

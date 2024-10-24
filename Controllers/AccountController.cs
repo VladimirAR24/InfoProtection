@@ -50,6 +50,7 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult Login(string returnUrl = null)
     {
+        if (User.Identity.IsAuthenticated) { return RedirectToAction("Encryption", "Encryption"); }
         ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
