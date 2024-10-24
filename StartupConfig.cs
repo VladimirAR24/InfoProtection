@@ -1,9 +1,13 @@
 ﻿using InfoProtection.Protection;
 using InfoProtection.Servises;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 public class StartupConfig
 {
@@ -22,8 +26,38 @@ public class StartupConfig
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddAuthentication("Bearer")  // добавление сервисов аутентификации
-    .AddJwtBearer();      // подключение аутентификации с помощью jwt-токенов
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)  // добавление сервисов аутентификации = Bearer
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes("secretkeysecretkeysecretkeysecretkeysecretkey"))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["JwtToken"];
+
+                return Task.CompletedTask;
+            }
+        };
+    });      // подключение аутентификации с помощью jwt-токенов
+
+        services.AddSingleton<IAuthorizationMiddlewareResultHandler, MyAuthorizationMiddlewareResultHandler>();     // В случае плохих мальчиков
+
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Login";
+        });
+
         services.AddAuthorization();            // добавление сервисов авторизации
 
         // Добавление MVC или контроллеров с представлениями

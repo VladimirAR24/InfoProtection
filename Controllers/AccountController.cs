@@ -62,11 +62,20 @@ public class AccountController : Controller
         DbAccess dbAccess = new DbAccess(_context);
         if (!ModelState.IsValid)
         {
-            View(model);
+            View(model);                                    // Вернуть форму с ошибками, если модель невалидна
         }
-        string token = await dbAccess.Login(model);
-        
-        return View();
+        string token = await dbAccess.Login(model);         // Генерация JWT токена
+
+        // Добавление токена в куки
+        Response.Cookies.Append("JwtToken", token, new CookieOptions
+        {
+            HttpOnly = true, // Установка HttpOnly, чтобы токен не был доступен через JavaScript
+            Expires = DateTime.UtcNow.AddHours(12), // Время жизни токена в куки
+            Secure = true,  // Устанавливается true, если работаете с HTTPS
+            SameSite = SameSiteMode.Strict // Повышает безопасность куки, не отправляя их с кросс-сайтовыми запросами
+        });
+
+        return RedirectToAction("Encryption", "Encryption"); // Редирект на главную страницу после успешного логина
     }
 
     [HttpPost]
