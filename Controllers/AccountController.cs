@@ -62,10 +62,11 @@ public class AccountController : Controller
         DbAccess dbAccess = new DbAccess(_context);
         if (!ModelState.IsValid)
         {
-            View(model);                                    // Вернуть форму с ошибками, если модель невалидна
+            return View(model);
         }
-        string token = await dbAccess.Login(model);         // Генерация JWT токена
 
+        var token = await dbAccess.Login(model);         // Генерация JWT токена
+        if (token == null) { return View(model); }
         // Добавление токена в куки
         Response.Cookies.Append("JwtToken", token, new CookieOptions
         {

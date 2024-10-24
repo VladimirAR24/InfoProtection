@@ -26,11 +26,11 @@ namespace InfoProtection.Models
             }
 
             // 2. Генерация соли
-            //string salt = HashMethods.GenerateSalt();
-            string salt = "Какая-то соль";
+            string salt = HashMethods.GenerateSalt();
+            //string salt = "Какая-то соль";
             // 3. Хеширование пароля с использованием Стрибог
-            string hashedPassword = "Какой-то хэш";
-            //string hashedPassword = HashMethods.HashPasswordUsingStreebog(model.Password, salt);
+            //string hashedPassword = "Какой-то хэш";
+            string hashedPassword = HashMethods.HashPasswordUsingStreebog(model.Password, salt);
 
             // 4. Создание нового пользователя
             var user = new User
@@ -53,10 +53,10 @@ namespace InfoProtection.Models
         public async Task<string> Login(LoginViewModel model)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
-            if (user == null) { throw new Exception("Failed to login user dont exict"); }
+            if (user == null) { throw new Exception("Failed to login user dont exict"); }               //TODO Сделать return null
 
-            var result = HashMethods.Verify(model.Password, user.PasswordHash);
-            if (result == false) { throw new Exception("Failed to login cant unhash password"); };
+            var result = HashMethods.VerifyPassword(model.Password, user.PasswordHash, user.Salt);
+            if (result == false) { throw new Exception("Failed to login cant unhash password"); };      //TODO Сделать return null
 
             var jwtProvider = new JwtProvider();
             string token = jwtProvider.GenerateToken(user);
