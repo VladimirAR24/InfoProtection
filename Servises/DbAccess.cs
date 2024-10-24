@@ -1,9 +1,11 @@
 ﻿using InfoProtection.Models.ViewModels;
 using InfoProtection.Protection;
+using InfoProtection.Servises;
 using Microsoft.EntityFrameworkCore;
 
 namespace InfoProtection.Models
 {
+    // TODO: Переименовать в юзерсервис и настроить логику, чтобы в контроллеры передавался он, а не appdbcontext
     public class DbAccess
     {
         private readonly ApplicationDbContext _context;
@@ -31,15 +33,14 @@ namespace InfoProtection.Models
             //string hashedPassword = HashMethods.HashPasswordUsingStreebog(model.Password, salt);
 
             // 4. Создание нового пользователя
-            var user = User.Create
-            (
-                0,
-                model.Username,
-                model.Email,
-                hashedPassword,
-                salt,
-                "User" // или другая роль по умолчанию
-            );
+            var user = new User
+            {
+                Username = model.Username,
+                Email = model.Email,
+                PasswordHash = hashedPassword,
+                Salt = salt,
+                Role = "User" // или другая роль по умолчанию
+            };
 
             // 5. Сохранение пользователя в базе данных
             _context.Users.Add(user);
@@ -49,5 +50,17 @@ namespace InfoProtection.Models
             return true;
         }
 
+        public async Task<string> Login(LoginViewModel model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null) { throw new Exception("Failed to login user dont exict"); }
+
+            var result = HashMethods.Verify(model.Password, user.PasswordHash);
+            if (result == false) { throw new Exception("Failed to login cant unhash password"); };
+
+            var jwtProvider = new JwtProvider();
+            string token = jwtProvider.GenerateToken(user);
+            return token;
+        }
     }
 }

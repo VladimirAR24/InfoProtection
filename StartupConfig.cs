@@ -1,6 +1,8 @@
-﻿using InfoProtection.Models;
+﻿using InfoProtection.Protection;
+using InfoProtection.Servises;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 public class StartupConfig
@@ -14,31 +16,19 @@ public class StartupConfig
 
     public void ConfigureServices(IServiceCollection services)
     {
-        
+        services.Configure<JwtOptions>(Configuration.GetSection(nameof(JwtOptions)));
+
         // Добавление подключения к базе данных (PostgreSQL через Entity Framework Core)
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddIdentity<IdentityUser, IdentityRole>()
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
+        services.AddAuthentication("Bearer")  // добавление сервисов аутентификации
+    .AddJwtBearer();      // подключение аутентификации с помощью jwt-токенов
+        services.AddAuthorization();            // добавление сервисов авторизации
 
         // Добавление MVC или контроллеров с представлениями
         services.AddControllersWithViews();
-        services.ConfigureApplicationCookie(options =>
-        {
-            options.LoginPath = "/Login"; // Путь к странице входа
-        });
         Console.WriteLine("Config 1 OK");
-
-        // Добавление сервисов для работы с авторизацией
-        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(options =>
-        {
-            options.LoginPath = "/Login"; // Путь на страницу логина
-        });
-
-        services.AddAuthorization(); // Добавление поддержки авторизации
 
     }
 

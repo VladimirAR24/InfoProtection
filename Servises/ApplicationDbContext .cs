@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using InfoProtection.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace InfoProtection.Models
+namespace InfoProtection.Servises
 {
     public class ApplicationDbContext : DbContext
     {

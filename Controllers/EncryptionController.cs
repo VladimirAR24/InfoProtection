@@ -1,10 +1,10 @@
 ﻿using InfoProtection.Models.ViewModels;
-using InfoProtection.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using InfoProtection.Protection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using InfoProtection.Servises;
 
 namespace InfoProtection.Controllers
 {
