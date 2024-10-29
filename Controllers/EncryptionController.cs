@@ -5,6 +5,7 @@ using InfoProtection.Protection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using InfoProtection.Servises;
+using InfoProtection.Models;
 
 namespace InfoProtection.Controllers
 {
@@ -28,8 +29,14 @@ namespace InfoProtection.Controllers
 
         [HttpPost]
         [Route("encryption")]
-        public IActionResult Encryption(EncryptionViewModel model, string action)
+        public async Task<IActionResult> Encryption(EncryptionViewModel model, string action)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+
             //Шифруем
             if (action == "encrypt")
             {
@@ -55,6 +62,11 @@ namespace InfoProtection.Controllers
                 }
             }
 
+            DbAccess dbAccess = new DbAccess(_context);
+            string currentUserId = User.Claims.FirstOrDefault().Value;
+            await dbAccess.CreateEnc(model, currentUserId);
+
+
             // Вернуть модель с результатом
             ModelState.Clear();
             return View(model);
@@ -64,13 +76,13 @@ namespace InfoProtection.Controllers
         [Route("myencryptions")]
         public async Task<IActionResult> MyEncryptions()
         {
-            // Получаем текущего пользователя
-            var currentUser = User.Identity.Name;
+            // Вытаскиваем из клеймов юзерайдишник
+            string currentUserId = User.Claims.FirstOrDefault().Value;
 
             // Получаем шифры текущего пользователя из базы данных
-            var userEncryptions = await _context.EncryptedMessages
-                .Where(e => e.User.Username == currentUser)
-                .ToListAsync();
+            DbAccess dbAccess = new DbAccess(_context);
+            var userEncryptions = await dbAccess.GetAllEncById(currentUserId);
+            //var userEncryptions = await _context.EncryptedMessages                .Where(e => e.User.Username == currentUser)                .ToListAsync();
 
             return View(userEncryptions);
         }

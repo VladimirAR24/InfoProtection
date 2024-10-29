@@ -6,12 +6,12 @@ namespace InfoProtection.Models.ViewModels
     {
         [Required]
         [Display(Name = "Algorithm")]
-        public string Algorithm { get; set; }
+        public required string Algorithm { get; set; }
 
         [Display(Name = "TextStart")]
-        public string TextStart { get; set; }
+        public required string TextStart { get; set; }
 
         [Display(Name = "TextEnd")]
-        public string TextEnd { get; set; }
+        public string? TextEnd { get; set; }
     }
 }

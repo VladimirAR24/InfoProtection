@@ -1,0 +1,27 @@
+﻿@model IEnumerable<InfoProtection.Models.EncryptedMessage>
+
+<table class="table table-bordered mt-4">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Algorithm</th>
+            <th>Original Text</th>
+            <th>Encrypted Text</th>
+            <th>Encryption Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.UserId</td>
+                <td>@item.Algorithm</td>
+                <td>@item.OriginalText</td>
+                <td>@item.EncryptedText</td>
+                <td>@item.EncryptionDate.ToString("dd-MM-yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

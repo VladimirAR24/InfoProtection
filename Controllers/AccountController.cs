@@ -60,11 +60,12 @@ public class AccountController : Controller
     [Route("Login")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
-        DbAccess dbAccess = new DbAccess(_context);
         if (!ModelState.IsValid)
         {
             return View(model);
         }
+
+        DbAccess dbAccess = new DbAccess(_context);
 
         var token = await dbAccess.Login(model);         // Генерация JWT токена
         if (token == null) { return View(model); }
