@@ -58,7 +58,7 @@ namespace InfoProtection.Controllers
                 }
                 else if (model.Algorithm == "RSA 16384")
                 {
-                    model.TextEnd = RSA.RsaDecrypt(model.TextStart);
+                    //model.TextEnd = RSA.RsaDecrypt(model.TextStart, null);
                 }
             }
 
