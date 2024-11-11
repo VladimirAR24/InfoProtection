@@ -21,6 +21,10 @@
 26) Где хранить ключи RSA
 24) РСА 16384 ручками
 25) Подумать как всё это вывести правильно и сделать
+26) Сделать реализацию шифров в ПДФ и их скачивание
+27) Добавить пдфникам ЭЦП
+28) Синхронизировать устройства
+
 
 
 Долгий ящик
@@ -36,3 +40,11 @@
 *Фани финг, я создал юзера. Забыл пароль. Ну посмотрю в бд. В бд : OZQ++ndA48gY392cWniHGku3q2EmF/ymjnIezZOzbYw=. Создаю нового юзера
 Test2@Test2.Test2	Пасворд : testhash
 Test3@Test3.Test3	Пасворд : testhash
+
+BouncyCastle.Cryptography
+Microsoft.AspNetCore.Authentication.JwtBearer
+Microsoft.AspNetCore.Identity.EntityFrameworkCore
+Microsoft.EntityFrameworkCore
+Microsoft.EntityFrameworkCore.Design
+Microsoft.EntityFrameworkCore.Tools
+Npgsql.EntityFrameworkCore.PostgreSQL
