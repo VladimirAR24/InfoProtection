@@ -99,17 +99,29 @@ namespace InfoProtection.Controllers
                 return NotFound("Шифр не найден или у вас нет доступа.");
             }
 
-            // Генерация PDF
-            var pdfService = new PdfService();
-            byte[] pdfData = pdfService.GeneratePdf(
-                encryptedMessage.Algorithm,
-                encryptedMessage.OriginalText,
-                encryptedMessage.EncryptedText,
-                encryptedMessage.EncryptionDate
-            );
 
-            // Возврат PDF для скачивания
-            return File(pdfData, "application/pdf", "EncryptedInfo.pdf");
+            //// Генерация PDF
+            var pdfService = new PdfSignatureService();
+
+            string content = "Текст вашего PDF";
+            string reason = "Для проверки";
+            string location = "Город";
+
+            var pdfBytes = pdfService.CreateAndSignPdf(
+    encryptedMessage.Algorithm,
+    encryptedMessage.OriginalText,
+    encryptedMessage.EncryptedText,
+    encryptedMessage.EncryptionDate
+);
+
+            //byte[] signedPdf = pdfService.CreateAndSignPdf(content, reason, location);
+
+            //File.WriteAllBytes("SignedDocument.pdf", signedPdf);
+            //Console.WriteLine("PDF успешно создан и подписан!");
+
+
+            //// Возврат PDF для скачивания
+            return File(pdfBytes, "application/pdf", "EncryptedInfo.pdf");
         }
 
     }

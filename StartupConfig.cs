@@ -52,6 +52,7 @@ public class StartupConfig
     });      // подключение аутентификации с помощью jwt-токенов
 
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, MyAuthorizationMiddlewareResultHandler>();     // В случае плохих мальчиков
+        //services.AddScoped<IDigitalSignatureService, DigitalSignatureService>();
 
         services.ConfigureApplicationCookie(options =>
         {
