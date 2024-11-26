@@ -23,6 +23,11 @@
                 <td>@encryption.OriginalText</td>
                 <td>@encryption.EncryptedText</td>
                 <td>@encryption.EncryptionDate.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <a asp-controller="MyEncryptions" asp-action="DownloadPdf" asp-route-id="@encryption.Id" class="btn btn-primary">
+                        Скачать PDF
+                    </a>
+                </td>
             </tr>
         }
     </tbody>

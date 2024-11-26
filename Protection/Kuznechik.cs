@@ -16,6 +16,7 @@ namespace InfoProtection.Protection
 
         public static string KuznechikEncrypt(string text)
         {
+            //string hexText = BitConverter.ToString(Encoding.UTF8.GetBytes(text)).Replace("-", "");
             //Генерация раундовых ключей
             GOST_Kuz_Expand_Key(key_1, key_2);
             byte[] encriptBlok = GOST_Kuz_Encrypt(Convert.FromHexString(text));

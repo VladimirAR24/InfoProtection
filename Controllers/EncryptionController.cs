@@ -87,5 +87,30 @@ namespace InfoProtection.Controllers
             return View(userEncryptions);
         }
 
+        [HttpGet]
+        [Route("Myencryptions/DownloadPdf/{id}")]
+        public IActionResult DownloadPdf(int id)
+        {
+            // Получение данных шифра из базы данных
+            var encryptedMessage = _context.EncryptedMessages.FirstOrDefault(m => m.Id == id && m.UserId.ToString() == User.Claims.FirstOrDefault().Value);
+
+            if (encryptedMessage == null)
+            {
+                return NotFound("Шифр не найден или у вас нет доступа.");
+            }
+
+            // Генерация PDF
+            var pdfService = new PdfService();
+            byte[] pdfData = pdfService.GeneratePdf(
+                encryptedMessage.Algorithm,
+                encryptedMessage.OriginalText,
+                encryptedMessage.EncryptedText,
+                encryptedMessage.EncryptionDate
+            );
+
+            // Возврат PDF для скачивания
+            return File(pdfData, "application/pdf", "EncryptedInfo.pdf");
+        }
+
     }
 }
