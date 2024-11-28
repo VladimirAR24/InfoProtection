@@ -52,3 +52,4 @@ Microsoft.EntityFrameworkCore.Tools
 Npgsql.EntityFrameworkCore.PostgreSQL
 
 Тестирую изменения для CI/CD
+Тестирую изменения для CI/CD (в лайф формате)
