@@ -1,0 +1,31 @@
+name: Build ASP.NET Project
+
+on:          #Определяет, когда должен запускаться workflow.
+  push:
+    branches:
+      - main  # Выполняется при пуше в ветку main
+  pull_request:
+    branches:
+      - main  # Выполняется при создании pull request для ветки main
+
+jobs:          # Задаёт набор задач (job), которые выполняются независимо или последовательно.
+  build:        # Название задачи
+    runs-on: windows-latest  # Указываем Windows для совместимости с используемыми библиотеками
+
+    steps:        # последовательность команд, выполняемых внутри одной задачи (job). Каждый шаг выполняется строго по порядку.
+    - name: Checkout code
+      uses: actions/checkout@v3  # Клонирует репозиторий
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0  # Указываем .NET 8.0 как целевую платформу
+
+    - name: Install Entity Framework Tools
+      run: dotnet tool install --global dotnet-ef  # Устанавливаем EF Tools для работы с миграциями
+
+    - name: Restore dependencies
+      run: dotnet restore  # Восстанавливает зависимости из файла csproj
+
+    - name: Build the project
+      run: dotnet build --configuration Release  # Собирает проект в режиме Release
