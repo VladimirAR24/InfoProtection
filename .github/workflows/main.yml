@@ -3,10 +3,10 @@ name: Build ASP.NET Project
 on:          #Определяет, когда должен запускаться workflow.
   push:
     branches:
-      - main  # Выполняется при пуше в ветку main
+      - master  # Выполняется при пуше в ветку main
   pull_request:
     branches:
-      - main  # Выполняется при создании pull request для ветки main
+      - master  # Выполняется при создании pull request для ветки main
 
 jobs:          # Задаёт набор задач (job), которые выполняются независимо или последовательно.
   build:        # Название задачи
