@@ -50,3 +50,5 @@ Microsoft.EntityFrameworkCore
 Microsoft.EntityFrameworkCore.Design
 Microsoft.EntityFrameworkCore.Tools
 Npgsql.EntityFrameworkCore.PostgreSQL
+
+Тестирую изменения для CI/CD
