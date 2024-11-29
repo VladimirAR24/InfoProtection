@@ -1,8 +1,12 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using InfoProtection.Controllers;
 using InfoProtection.Models;
 using InfoProtection.Servises;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +31,7 @@ namespace InfoProtection.Tests
                     {
                         // Настраиваем тестовую базу данных
                         services.AddDbContext<ApplicationDbContext>(options =>
-                            options.UseNpgsql("TestDatabase"));
+                            options.UseNpgsql("Host=localhost;Port=5432;Database=InfProtec;Username=postgres;Password=vladimir"));
 
                         // Добавляем Mock PdfSignatureService
                         _pdfServiceMock = new Mock<PdfSignatureService>();
@@ -38,42 +42,44 @@ namespace InfoProtection.Tests
             _client = factory.CreateClient();
         }
 
-
-
         [Fact]
-        public async Task DownloadPdf_ValidId_ReturnsPdfFile()
+        public void DownloadPdf_ValidId_ReturnsPdfFile()
         {
-            // Arrange: Создаём тестовые данные
-            using (var scope = _factory.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                context.EncryptedMessages.Add(new EncryptedMessage
-                {
-                    Id = 1,
-                    UserId = 2,
-                    Algorithm = "RSA",
-                    OriginalText = "Test text",
-                    EncryptedText = "Encrypted text",
-                    EncryptionDate = DateTime.UtcNow
-                });
-                context.SaveChanges();
-            }
+            // Arrange
+            var mockDbSet = new Mock<DbSet<EncryptedMessage>>();
+            var testData = new List<EncryptedMessage>
+    {
+        new EncryptedMessage
+        {
+            Id = 1,
+            UserId = 3,
+            Algorithm = "AES",
+            OriginalText = "Hello",
+            EncryptedText = "Encrypted",
+            EncryptionDate = DateTime.Now
+        }
+    }.AsQueryable();
 
-            // Настраиваем Mock для возвращения данных
-            _pdfServiceMock.Setup(s => s.CreateAndSignPdf(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
-                .Returns(new byte[] { 0x25, 0x50, 0x44, 0x46 }); // Заголовок PDF
+            mockDbSet.As<IQueryable<EncryptedMessage>>().Setup(m => m.Provider).Returns(testData.Provider);
+            mockDbSet.As<IQueryable<EncryptedMessage>>().Setup(m => m.Expression).Returns(testData.Expression);
+            mockDbSet.As<IQueryable<EncryptedMessage>>().Setup(m => m.ElementType).Returns(testData.ElementType);
+            mockDbSet.As<IQueryable<EncryptedMessage>>().Setup(m => m.GetEnumerator()).Returns(testData.GetEnumerator());
+
+            var mockContext = new Mock<ApplicationDbContext>();
+            mockContext.Setup(c => c.EncryptedMessages).Returns(mockDbSet.Object);
+
+            var controller = new EncryptionController(mockContext.Object);
 
             // Act
-            var response = await _client.GetAsync("/Myencryptions/DownloadPdf/1");
+            var result = controller.DownloadPdf(1) as FileContentResult;
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("application/pdf", response.Content.Headers.ContentType.ToString());
-
-            var pdfBytes = await response.Content.ReadAsByteArrayAsync();
-            Assert.NotNull(pdfBytes);
-            Assert.True(pdfBytes.Length > 0, "PDF файл пуст.");
+            Assert.NotNull(result);
+            Assert.Equal("application/pdf", result.ContentType);
+            Assert.Equal("EncryptedInfo.pdf", result.FileDownloadName);
         }
+
+
 
         [Fact]
         public async Task DownloadPdf_InvalidId_ReturnsNotFound()
