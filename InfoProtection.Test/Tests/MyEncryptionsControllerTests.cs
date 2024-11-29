@@ -15,6 +15,7 @@ namespace InfoProtection.Tests
     {
         private readonly HttpClient _client;
         private Mock<PdfSignatureService> _pdfServiceMock;
+        private readonly WebApplicationFactory<Program> _factory;
 
         public MyEncryptionsControllerTests()
         {
@@ -37,17 +38,19 @@ namespace InfoProtection.Tests
             _client = factory.CreateClient();
         }
 
+
+
         [Fact]
         public async Task DownloadPdf_ValidId_ReturnsPdfFile()
         {
             // Arrange: Создаём тестовые данные
-            using (var scope = factory.Services.CreateScope())
+            using (var scope = _factory.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 context.EncryptedMessages.Add(new EncryptedMessage
                 {
                     Id = 1,
-                    UserId = "test-user-id",
+                    UserId = 2,
                     Algorithm = "RSA",
                     OriginalText = "Test text",
                     EncryptedText = "Encrypted text",
