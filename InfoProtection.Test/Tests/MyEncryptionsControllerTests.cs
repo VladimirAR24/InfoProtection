@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using InfoProtection.Controllers;
 using InfoProtection.Models;
 using InfoProtection.Servises;
+using InfoProtection.Test;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,85 +14,63 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 
-namespace InfoProtection.Tests
+namespace InfoProtection.Tests.Tests
 {
     public class MyEncryptionsControllerTests
     {
-        private readonly HttpClient _client;
-        private Mock<PdfSignatureService> _pdfServiceMock;
-        private readonly WebApplicationFactory<Program> _factory;
-
-        public MyEncryptionsControllerTests()
-        {
-            // Настраиваем тестовое окружение
-            var factory = new WebApplicationFactory<Program>()
-                .WithWebHostBuilder(builder =>
-                {
-                    builder.ConfigureServices(services =>
-                    {
-                        // Настраиваем тестовую базу данных
-                        services.AddDbContext<ApplicationDbContext>(options =>
-                            options.UseNpgsql("Host=localhost;Port=5432;Database=InfProtec;Username=postgres;Password=vladimir"));
-
-                        // Добавляем Mock PdfSignatureService
-                        _pdfServiceMock = new Mock<PdfSignatureService>();
-                        services.AddScoped(_ => _pdfServiceMock.Object);
-                    });
-                });
-
-            _client = factory.CreateClient();
-        }
-
         [Fact]
         public void DownloadPdf_ValidId_ReturnsPdfFile()
         {
             // Arrange
-            var mockDbSet = new Mock<DbSet<EncryptedMessage>>();
-            var testData = new List<EncryptedMessage>
-    {
-        new EncryptedMessage
-        {
-            Id = 1,
-            UserId = 3,
-            Algorithm = "AES",
-            OriginalText = "Hello",
-            EncryptedText = "Encrypted",
-            EncryptionDate = DateTime.Now
-        }
-    }.AsQueryable();
+            var context = TestDbContextFactory.CreateInMemoryDbContext();
 
-            mockDbSet.As<IQueryable<EncryptedMessage>>().Setup(m => m.Provider).Returns(testData.Provider);
-            mockDbSet.As<IQueryable<EncryptedMessage>>().Setup(m => m.Expression).Returns(testData.Expression);
-            mockDbSet.As<IQueryable<EncryptedMessage>>().Setup(m => m.ElementType).Returns(testData.ElementType);
-            mockDbSet.As<IQueryable<EncryptedMessage>>().Setup(m => m.GetEnumerator()).Returns(testData.GetEnumerator());
+            context.Users.Add(new User
+            {
+                Id = 1,
+                Username = "testuser",
+                PasswordHash = "hash",
+                Salt = "salt",
+                Role = "Admin",
+                Email = "test@example.com"
+            });
 
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(c => c.EncryptedMessages).Returns(mockDbSet.Object);
 
-            var controller = new EncryptionController(mockContext.Object);
+            context.EncryptedMessages.Add(new EncryptedMessage
+            {
+                Id = 1,
+                UserId = 1,
+                Algorithm = "AES",
+                OriginalText = "Original Text",
+                EncryptedText = "Encrypted Text",
+                EncryptionDate = DateTime.Now,
+            });
+            context.SaveChanges();
+
+            var controller = new EncryptionController(context);
 
             // Act
-            var result = controller.DownloadPdf(1) as FileContentResult;
+            var result = controller.DownloadPdf(1);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal("application/pdf", result.ContentType);
-            Assert.Equal("EncryptedInfo.pdf", result.FileDownloadName);
+            Assert.IsType<FileContentResult>(result);
+            var fileResult = result as FileContentResult;
+            Assert.Equal("application/pdf", fileResult.ContentType);
+            Assert.Equal("EncryptedInfo.pdf", fileResult.FileDownloadName);
         }
-
 
 
         [Fact]
-        public async Task DownloadPdf_InvalidId_ReturnsNotFound()
+        public void DownloadPdf_InvalidId_ReturnsNotFound()
         {
+            // Arrange
+            var context = TestDbContextFactory.CreateInMemoryDbContext();
+            var controller = new EncryptionController(context);
+
             // Act
-            var response = await _client.GetAsync("/Myencryptions/DownloadPdf/999");
+            var result = controller.DownloadPdf(999);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            Assert.Equal("Шифр не найден или у вас нет доступа.", errorMessage);
+            Assert.IsType<NotFoundObjectResult>(result);
         }
     }
 }

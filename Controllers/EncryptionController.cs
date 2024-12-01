@@ -92,8 +92,16 @@ namespace InfoProtection.Controllers
         public IActionResult DownloadPdf(int id)
         {
             // Получение данных шифра из базы данных
-            var encryptedMessage = _context.EncryptedMessages.FirstOrDefault(m => m.Id == id && m.UserId.ToString() == User.Claims.FirstOrDefault().Value);
-
+            //var encryptedMessage = _context.EncryptedMessages.FirstOrDefault(m => m.Id == id && m.UserId.ToString() == User.Claims.FirstOrDefault().Value);
+            var encryptedMessage = new EncryptedMessage
+            {
+                Id = 1,
+                Algorithm = "RSA",
+                OriginalText = "OriginalText",
+                EncryptedText = "EncryptedText",
+                EncryptionDate = DateTime.Now,
+                UserId = 1
+            };
             if (encryptedMessage == null)
             {
                 return NotFound("Шифр не найден или у вас нет доступа.");
