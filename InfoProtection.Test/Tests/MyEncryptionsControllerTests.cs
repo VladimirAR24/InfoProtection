@@ -62,8 +62,30 @@ namespace InfoProtection.Tests.Tests
         [Fact]
         public void DownloadPdf_InvalidId_ReturnsNotFound()
         {
-            // Arrange
             var context = TestDbContextFactory.CreateInMemoryDbContext();
+
+            context.Users.Add(new User
+            {
+                Id = 1,
+                Username = "testuser",
+                PasswordHash = "hash",
+                Salt = "salt",
+                Role = "Admin",
+                Email = "test@example.com"
+            });
+
+
+            context.EncryptedMessages.Add(new EncryptedMessage
+            {
+                Id = 1,
+                UserId = 1,
+                Algorithm = "AES",
+                OriginalText = "Original Text",
+                EncryptedText = "Encrypted Text",
+                EncryptionDate = DateTime.Now,
+            });
+            context.SaveChanges();
+
             var controller = new EncryptionController(context);
 
             // Act
