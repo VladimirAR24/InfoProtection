@@ -5,6 +5,7 @@ on:          #Определяет, когда должен запускатьс
     branches:
       - master  # Выполняется при пуше в ветку main
       - development
+      - release
   pull_request:
     branches:
       - master  # Выполняется при создании pull request для ветки main
