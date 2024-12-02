@@ -50,7 +50,8 @@ public class PdfSignatureService
         document.Close(); // Закрыть документ перед подписью
 
         // Подпись PDF
-        return SignPdf(memoryStream.ToArray());
+        //return SignPdf(memoryStream.ToArray());
+        return memoryStream.ToArray();
     }
 
     /// <summary>

@@ -43,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Certificates\" />
     <Folder Include="Interfaces\" />
   </ItemGroup>
 

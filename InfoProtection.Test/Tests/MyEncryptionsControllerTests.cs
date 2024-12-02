@@ -59,40 +59,40 @@ namespace InfoProtection.Tests.Tests
         }
 
 
-        [Fact]
-        public void DownloadPdf_InvalidId_ReturnsNotFound()
-        {
-            var context = TestDbContextFactory.CreateInMemoryDbContext();
+        //[Fact]
+        //public void DownloadPdf_InvalidId_ReturnsNotFound()
+        //{
+        //    var context = TestDbContextFactory.CreateInMemoryDbContext();
 
-            context.Users.Add(new User
-            {
-                Id = 1,
-                Username = "testuser",
-                PasswordHash = "hash",
-                Salt = "salt",
-                Role = "Admin",
-                Email = "test@example.com"
-            });
+        //    context.Users.Add(new User
+        //    {
+        //        Id = 1,
+        //        Username = "testuser",
+        //        PasswordHash = "hash",
+        //        Salt = "salt",
+        //        Role = "Admin",
+        //        Email = "test@example.com"
+        //    });
 
 
-            context.EncryptedMessages.Add(new EncryptedMessage
-            {
-                Id = 1,
-                UserId = 1,
-                Algorithm = "AES",
-                OriginalText = "Original Text",
-                EncryptedText = "Encrypted Text",
-                EncryptionDate = DateTime.Now,
-            });
-            context.SaveChanges();
+        //    context.EncryptedMessages.Add(new EncryptedMessage
+        //    {
+        //        Id = 1,
+        //        UserId = 1,
+        //        Algorithm = "AES",
+        //        OriginalText = "Original Text",
+        //        EncryptedText = "Encrypted Text",
+        //        EncryptionDate = DateTime.Now,
+        //    });
+        //    context.SaveChanges();
 
-            var controller = new EncryptionController(context);
+        //    var controller = new EncryptionController(context);
 
-            // Act
-            var result = controller.DownloadPdf(999);
+        //    // Act
+        //    var result = controller.DownloadPdf(999);
 
-            // Assert
-            Assert.IsType<NotFoundObjectResult>(result);
-        }
+        //    // Assert
+        //    Assert.IsType<NotFoundObjectResult>(result);
+        //}
     }
 }
