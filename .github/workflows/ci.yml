@@ -24,11 +24,6 @@ jobs:
     - name: Run tests
       run: dotnet test --no-restore
 
-    - name: Install GitHub CLI
-      run: |
-        choco install gh
-        gh auth setup-git
-
     - name: Create pull request to master
       if: success()
       run: gh pr create --base master --head development --title "Auto-merge from development" --body "PR created automatically after successful tests."
