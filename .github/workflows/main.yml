@@ -34,13 +34,3 @@ jobs:          # Задаёт набор задач (job), которые вып
 
     - name: Run tests
       run: dotnet test --no-build --configuration Release --verbosity normal
-
-    - name: Generate documentation
-      run: |
-          echo "# Документация" > docs/index.md
-      
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
