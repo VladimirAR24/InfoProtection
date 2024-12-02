@@ -34,3 +34,7 @@ jobs:          # Задаёт набор задач (job), которые вып
 
     - name: Run tests
       run: dotnet test --no-build --configuration Release --verbosity normal
+
+    - name: Generate documentation
+      run: |
+         echo "# Документация" > docs/index.md
