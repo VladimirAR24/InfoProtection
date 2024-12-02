@@ -92,21 +92,7 @@ namespace InfoProtection.Controllers
         public IActionResult DownloadPdf(int id)
         {
             // Получение данных шифра из базы данных
-            //var encryptedMessage = _context.EncryptedMessages.FirstOrDefault(m => m.Id == id && m.UserId.ToString() == User.Claims.FirstOrDefault().Value);
-            var encryptedMessage = new EncryptedMessage
-            {
-                Id = 1,
-                Algorithm = "RSA",
-                OriginalText = "OriginalText",
-                EncryptedText = "EncryptedText",
-                EncryptionDate = DateTime.Now,
-                UserId = 1
-            };
-            if (encryptedMessage == null)
-            {
-                return NotFound("Шифр не найден или у вас нет доступа.");
-            }
-
+            var encryptedMessage = _context.EncryptedMessages.FirstOrDefault(m => m.Id == id);
 
             //// Генерация PDF
             var pdfService = new PdfSignatureService();
@@ -121,11 +107,6 @@ namespace InfoProtection.Controllers
     encryptedMessage.EncryptedText,
     encryptedMessage.EncryptionDate
 );
-
-            //byte[] signedPdf = pdfService.CreateAndSignPdf(content, reason, location);
-
-            //File.WriteAllBytes("SignedDocument.pdf", signedPdf);
-            //Console.WriteLine("PDF успешно создан и подписан!");
 
 
             //// Возврат PDF для скачивания
