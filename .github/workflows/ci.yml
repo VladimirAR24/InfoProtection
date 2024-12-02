@@ -1,0 +1,36 @@
+name: CI for Development
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Run tests
+      run: dotnet test --no-restore
+
+    - name: Install GitHub CLI
+      run: |
+        choco install gh
+        gh auth setup-git
+
+    - name: Create pull request to master
+      if: success()
+      run: gh pr create --base master --head development --title "Auto-merge from development" --body "PR created automatically after successful tests."
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
