@@ -29,3 +29,6 @@ jobs:          # Задаёт набор задач (job), которые вып
 
     - name: Build the project
       run: dotnet build --configuration Release  # Собирает проект в режиме Release
+
+    - name: Run tests
+      run: dotnet test --no-build --configuration Release --verbosity normal
