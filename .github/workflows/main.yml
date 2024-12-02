@@ -37,7 +37,6 @@ jobs:          # Задаёт набор задач (job), которые вып
 
     - name: Generate documentation
       run: |
-          mkdir -p docs
           echo "# Документация" > docs/index.md
       
     - name: Deploy to GitHub Pages
